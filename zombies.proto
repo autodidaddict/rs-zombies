@@ -4,6 +4,7 @@ package zombies;
 
 service Zombies {
     rpc report_sighting(SightingReportRequest) returns (SightingReportResponse);
+    rpc zombies_nearby(ProximityRequest) returns (ProximityResponse);
 }
 
 message SightingReportRequest {
@@ -13,6 +14,19 @@ message SightingReportRequest {
 
 message SightingReportResponse {
     bool accepted = 1;
+}
+
+message ProximityRequest {
+    Location location = 1;
+}
+
+message ProximityResponse {
+    repeated Zombie zombies = 1;
+}
+
+message Zombie {
+    string name = 1;
+    Location location = 2;
 }
 
 message Location {
