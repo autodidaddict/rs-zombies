@@ -12,9 +12,9 @@ use futures_cpupool::CpuPool;
 use rs_zombies::zombies_grpc::*;
 use rs_zombies::zombies::*;
 
-struct ZombiesImpl;
+struct ZombiesService;
 
-impl Zombies for ZombiesImpl {
+impl Zombies for ZombiesService {
     fn report_sighting(&self,
                        _m: grpc::RequestOptions,
                        req: SightingReportRequest)
@@ -57,7 +57,7 @@ impl Zombies for ZombiesImpl {
 fn main() {
     let _server = ZombiesServer::new_pool("[::]:50051",
                                           Default::default(),
-                                          ZombiesImpl,
+                                          ZombiesService,
                                           CpuPool::new(4))
         .expect("server");
 
