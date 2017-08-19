@@ -23,7 +23,7 @@ fn main() {
     let mut nearby_req = ProximityRequest::new();
     let mut location = Location::new();
     location.latitude = 40.730610;
-    location.longitude = -73.935242;
+    location.longitude = -73.935242;    
     nearby_req.set_location(location);
 
     let nearby_resp = client.zombies_nearby(grpc::RequestOptions::new(), nearby_req);

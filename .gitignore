@@ -3,3 +3,4 @@ target/
 .idea/
 src/zombies.rs
 src/zombies_grpc.rs
+.vscode/
