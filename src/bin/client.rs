@@ -1,13 +1,13 @@
-extern crate rs_zombies;
-extern crate grpc;
 extern crate futures;
+extern crate grpc;
+extern crate rs_zombies;
 
 use rs_zombies::zombies_grpc::*;
 use rs_zombies::zombies::*;
 
 
 fn main() {
-    let client = ZombiesClient::new_plain("localhost", 50051, Default::default()).unwrap();
+    let client = ZombiesClient::new_plain("localhost", 8080, Default::default()).unwrap();
 
     let mut req = SightingReportRequest::new();
     req.set_name("bob".to_string());
@@ -23,7 +23,7 @@ fn main() {
     let mut nearby_req = ProximityRequest::new();
     let mut location = Location::new();
     location.latitude = 40.730610;
-    location.longitude = -73.935242;    
+    location.longitude = -73.935242;
     nearby_req.set_location(location);
 
     let nearby_resp = client.zombies_nearby(grpc::RequestOptions::new(), nearby_req);

@@ -1,36 +1,41 @@
 extern crate futures;
 extern crate futures_cpupool;
 
-extern crate rs_zombies;
 extern crate grpc;
 extern crate protobuf;
+extern crate rs_zombies;
 
 use std::thread;
-
-use futures_cpupool::CpuPool;
 
 use rs_zombies::zombies_grpc::*;
 use rs_zombies::zombies::*;
 
-struct ZombiesService;
+struct ZombiesServiceImpl;
 
-impl Zombies for ZombiesService {
-    fn report_sighting(&self,
-                       _m: grpc::RequestOptions,
-                       req: SightingReportRequest)
-                       -> grpc::SingleResponse<SightingReportResponse> {
+impl Zombies for ZombiesServiceImpl {
+    fn report_sighting(
+        &self,
+        _m: grpc::RequestOptions,
+        req: SightingReportRequest,
+    ) -> grpc::SingleResponse<SightingReportResponse> {
         let mut r = SightingReportResponse::new();
 
-        println!("Received zombie sighting report of {} at {}, {}", req.get_name(), req.get_location().latitude, req.get_location().longitude);
+        println!(
+            "Received zombie sighting report of {} at {}, {}",
+            req.get_name(),
+            req.get_location().latitude,
+            req.get_location().longitude
+        );
 
         r.set_accepted(true);
         grpc::SingleResponse::completed(r)
     }
 
-    fn zombies_nearby(&self,
-                      _m: grpc::RequestOptions,
-                      req: ProximityRequest)
-                      -> grpc::SingleResponse<ProximityResponse> {
+    fn zombies_nearby(
+        &self,
+        _m: grpc::RequestOptions,
+        _req: ProximityRequest,
+    ) -> grpc::SingleResponse<ProximityResponse> {
         let mut r = ProximityResponse::new();
 
         let mut location = Location::new();
@@ -55,11 +60,11 @@ impl Zombies for ZombiesService {
 }
 
 fn main() {
-    let _server = ZombiesServer::new_pool("[::]:50051",
-                                          Default::default(),
-                                          ZombiesService,
-                                          CpuPool::new(4))
-        .expect("server");
+    let mut server = grpc::ServerBuilder::new_plain();
+    server.http.set_port(8080);
+    server.add_service(ZombiesServer::new_service_def(ZombiesServiceImpl));
+    server.http.set_cpu_pool_threads(4);
+    let _server = server.build().expect("server");
 
     loop {
         thread::park();
